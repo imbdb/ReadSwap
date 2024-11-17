@@ -16,9 +16,6 @@ export const Navigation = () => {
         <Link href="/" className="mr-4">
           Home
         </Link>
-        <Link href="/exchanges" className="mr-4">
-          Exchanges
-        </Link>
       </div>
 
       <div className="text-right">

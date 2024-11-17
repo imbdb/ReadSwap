@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased mb-10`}
       >
         <header className="bg-slate-900 text-white p-4 text-center">
           <Navigation />
@@ -35,7 +35,7 @@ export default function RootLayout({
         <Toaster position="bottom-right" />
         {children}
         <footer className="bg-slate-900 text-white p-4 text-center mt-auto fixed bottom-0 w-full">
-          <p>Footer</p>
+          <div className="container mx-auto">© 2024 ReadSwap</div>
         </footer>
       </body>
     </html>

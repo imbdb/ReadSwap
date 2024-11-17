@@ -6,22 +6,35 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
+  Query,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Prisma } from '@prisma/client';
+import { AuthGuard } from 'src/jwt-auth/jwt-auth.guard';
 
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createBookDto: Prisma.BookCreateInput) {
-    return this.booksService.create(createBookDto);
+  create(@Req() req, @Body() createBookDto: Prisma.BookCreateInput) {
+    const { user } = req;
+    return this.booksService.create(user.id, createBookDto);
   }
 
-  @Get()
-  findAll() {
-    return this.booksService.findAll();
+  @Get('all')
+  findAll(@Query('search') search: string) {
+    return this.booksService.findAll(search);
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('me')
+  me(@Req() req) {
+    const { user } = req;
+    return this.booksService.findByOwner(user.id);
   }
 
   @Get(':id')

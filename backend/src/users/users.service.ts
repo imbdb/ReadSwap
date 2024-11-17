@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 import * as bcrypt from 'bcrypt';
@@ -97,6 +97,35 @@ export class UsersService {
         where: { id: userId },
         data: { emailVerified: true },
       });
+    } catch (error) {
+      throw new Error('invalid_token');
+    }
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.db.user.findFirst({ where: { email } });
+    if (!user) {
+      throw new HttpException('user_not_found', 404);
+    }
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: '48h',
+    });
+
+    await sendEmail(
+      user.email,
+      'Reset Password',
+      `Please reset your password by clicking on the following link: ${process.env.FRONTEND_URL}/reset-password?token=${token}`,
+      `<strong>Please reset your password by clicking on the following link: <a href="${process.env.FRONTEND_URL}/reset-password?token=${token}">Reset Password</a></strong>`,
+    );
+  }
+
+  async resetPassword(token: string, password: string): Promise<void> {
+    try {
+      const decoded: any = jwt.verify(token, process.env.JWT_SECRET);
+      const userId = decoded.id;
+
+      await this.storePassword(userId, password);
     } catch (error) {
       throw new Error('invalid_token');
     }

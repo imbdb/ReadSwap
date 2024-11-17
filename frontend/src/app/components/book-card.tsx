@@ -7,15 +7,17 @@ export interface BookCardProps {
   isbn?: string;
   pages?: number;
   condition?: string;
+  genre?: string;
 }
 
 const BookCard: React.FC<{ book: BookCardProps }> = ({ book }) => {
   // eslint-disable-next-line prefer-const
-  let { title, imageUrl, isbn, pages, condition } = book;
+  let { title, imageUrl, isbn, pages, condition, genre } = book;
   imageUrl = imageUrl || "/images/sample-book.jpg";
   isbn = isbn || "-";
   pages = pages;
   condition = condition || "Unknown";
+  genre = genre || "Unknown";
   return (
     <div className="flex items-center p-4 bg-white">
       <div
@@ -29,6 +31,7 @@ const BookCard: React.FC<{ book: BookCardProps }> = ({ book }) => {
         {condition && (
           <div className="text-sm text-gray-600">Condition: {condition}</div>
         )}
+        {genre && <div className="text-sm text-gray-600">Genre: {genre}</div>}
       </div>
     </div>
   );

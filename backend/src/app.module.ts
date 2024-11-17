@@ -6,6 +6,7 @@ import { BooksModule } from './books/books.module';
 import { UsersModule } from './users/users.module';
 import { ExchangesModule } from './exchanges/exchanges.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtAuthModule } from './jwt-auth/jwt-auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AuthModule } from './auth/auth.module';
     BooksModule,
     ExchangesModule,
     AuthModule,
+    JwtAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

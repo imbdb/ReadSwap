@@ -6,12 +6,30 @@ import { DatabaseService } from 'src/database/database.service';
 export class BooksService {
   constructor(private readonly db: DatabaseService) {}
 
-  async create(createBookDto: Prisma.BookCreateInput) {
-    return this.db.book.create({ data: createBookDto });
+  async create(userId: any, createBookDto: Partial<Prisma.BookCreateInput>) {
+    const user = await this.db.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    createBookDto.user = { connect: { id: user.id } };
+    return this.db.book.create({
+      data: createBookDto as Prisma.BookCreateInput,
+    });
   }
 
-  async findAll() {
-    return this.db.book.findMany();
+  async findAll(search: string) {
+    if (!search) {
+      return this.db.book.findMany({
+        where: {
+          wishlist: false,
+        },
+      });
+    }
+    return this.db.book.findMany({
+      where: {
+        OR: [{ title: { contains: search } }],
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -27,5 +45,9 @@ export class BooksService {
 
   async remove(id: number) {
     return this.db.book.delete({ where: { id } });
+  }
+
+  async findByOwner(ownerId: number) {
+    return this.db.book.findMany({ where: { userId: ownerId } });
   }
 }

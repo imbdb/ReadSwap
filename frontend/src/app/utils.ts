@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useAuthStore } from "./stores/authStore";
 
 const getAuthToken = (): string | null => {
-  return useAuthStore.getState().user?.token || null;
+  return useAuthStore.getState().token || null;
 };
 
 export const authHttp = {
@@ -32,14 +32,14 @@ export const authHttp = {
     });
   },
 
-  put: async (
+  patch: async (
     url: string,
     data: any,
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse> => {
     const token = getAuthToken();
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    return axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}${url}`, data, {
+    return axios.patch(`${process.env.NEXT_PUBLIC_BACKEND_URL}${url}`, data, {
       ...config,
       headers,
     });
