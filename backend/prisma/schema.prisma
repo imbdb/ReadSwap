@@ -1,0 +1,54 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  email          String           @unique
+  emailVerified  Boolean          @default(false)
+  name           String
+  books          Book[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  exchanges      Exchange[]
+  passwordHashes PasswordHashes[]
+}
+
+model Book {
+  id        Int        @id @default(autoincrement())
+  title     String
+  author    String
+  isbn      String?
+  image     String?
+  pages     Int?
+  userId    Int
+  user      User       @relation(fields: [userId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  exchanges Exchange[]
+}
+
+model Exchange {
+  id        Int      @id @default(autoincrement())
+  bookId    Int
+  book      Book     @relation(fields: [bookId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PasswordHashes {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  hash      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
